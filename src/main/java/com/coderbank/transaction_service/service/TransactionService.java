@@ -7,6 +7,7 @@ import com.coderbank.transaction_service.dto.request.TransactionRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
@@ -25,7 +26,12 @@ public class TransactionService {
                 request.getCurrency(),
                 request.getDescription()
         );
-        t.setStatus(TransactionStatus.PENDING);
+        BigDecimal amt = request.getAmount();
+        if (amt != null && amt.compareTo(BigDecimal.ZERO) > 0) {
+            t.setStatus(TransactionStatus.COMPLETED);
+        } else {
+            t.setStatus(TransactionStatus.PENDING);
+        }
         return repository.save(t);
     }
 
