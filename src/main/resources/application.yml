@@ -1,0 +1,35 @@
+server:
+  port: 8086   # ou a porta que você escolheu para o transaction-service
+
+spring:
+  datasource:
+    url: jdbc:postgresql://127.0.0.1:5433/transaction_db
+    username: postgres
+    password: root
+
+  jpa:
+    hibernate:
+      ddl-auto: validate   # valida o schema criado via Flyway
+    properties:
+      hibernate:
+        format_sql: true
+        jdbc.time_zone: UTC
+
+  flyway:
+    enabled: true
+    # sem url/user/password → o Spring usa os mesmos do datasource
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info
+
+logging:
+  level:
+    root: INFO
+    com.coderbank.transaction: DEBUG   # ajuste para o pacote raiz do seu projeto
+  pattern:
+    console: >
+      {"ts":"%d{yyyy-MM-dd'T'HH:mm:ss.SSSXXX}","level":"%p",
+       "logger":"%c{1}","msg":"%m","thread":"%t"}%n
