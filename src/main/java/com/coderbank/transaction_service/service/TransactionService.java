@@ -3,7 +3,7 @@ package com.coderbank.transaction_service.service;
 import com.coderbank.transaction_service.model.Transaction;
 import com.coderbank.transaction_service.model.TransactionStatus;
 import com.coderbank.transaction_service.repository.TransactionRepository;
-import com.coderbank.transaction_service.service.dto.TransactionRequest;
+import com.coderbank.transaction_service.dto.request.TransactionRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,7 +25,7 @@ public class TransactionService {
                 request.getCurrency(),
                 request.getDescription()
         );
-        t.setStatus(request.getStatus() != null ? request.getStatus() : TransactionStatus.PENDING);
+        t.setStatus(TransactionStatus.PENDING);
         return repository.save(t);
     }
 
