@@ -60,4 +60,14 @@ public class Transaction {
 
     public Instant getCreatedAt() { return createdAt; }
     public void setCreatedAt(Instant createdAt) { this.createdAt = createdAt; }
+
+    @PrePersist
+    void prePersist() {
+        if (this.createdAt == null) {
+            this.createdAt = Instant.now();
+        }
+        if (this.status == null) {
+            this.status = TransactionStatus.PENDING;
+        }
+    }
 }
