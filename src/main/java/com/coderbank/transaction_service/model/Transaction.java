@@ -1,5 +1,6 @@
 package com.coderbank.transaction_service.model;
 
+import com.coderbank.transaction_service.model.enums.TransactionStatus;
 import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -70,4 +71,34 @@ public class Transaction {
             this.status = TransactionStatus.PENDING;
         }
     }
-}
+
+    // Lógica Amount
+
+   public void registerAmount (BigDecimal incomingAmount) {
+        if (incomingAmount == null || incomingAmount.compareTo(BigDecimal.ZERO) <= 0) {
+            this.status = TransactionStatus.FAILED;
+        }
+        this.amount = incomingAmount;
+
+        this.status = TransactionStatus.COMPLETED;
+    }
+
+
+    private static final BigDecimal BONUS_VALUE = new BigDecimal("50.00"); //Constante do valor do bônus// //Sempre usar BigDecimal para valores monetários
+
+    public void bonusTransaction ( UUID accountId ){
+
+
+        this.accountId = accountId;
+
+        this.status = TransactionStatus.COMPLETED;
+
+        this.amount = BONUS_VALUE;
+
+        this.createdAt = Instant.now();
+
+
+    }
+
+   }
+

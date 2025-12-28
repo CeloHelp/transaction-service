@@ -1,11 +1,12 @@
 server:
-  port: 8080
+  port: 8082
 
 spring:
   datasource:
-    url: jdbc:postgresql://postgres:5432/transaction_db
+    url: jdbc:postgresql://127.0.0.1:5434/transaction_db
     username: transaction_user
     password: transaction_pass
+
   jpa:
     hibernate:
       ddl-auto: none
@@ -13,14 +14,19 @@ spring:
       hibernate:
         format_sql: true
         jdbc.time_zone: UTC
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
   flyway:
     enabled: true
     locations: classpath:db/migration
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-logging:
-  level:
-    root: INFO
+    url: jdbc:postgresql://127.0.0.1:5434/transaction_db
+    user: transaction_user
+    password: transaction_pass
+
+  docker:
+    compose:
+      enabled: false
+
+
+
+

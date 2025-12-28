@@ -1,47 +1,57 @@
 package com.coderbank.transaction_service.controller;
 
-import com.coderbank.transaction_service.dto.request.TransactionRequest;
-import com.coderbank.transaction_service.dto.response.TransactionResponse;
-import com.coderbank.transaction_service.model.Transaction;
+import com.coderbank.transaction_service.dto.request.TransactionRequestDTO;
+import com.coderbank.transaction_service.dto.response.TransactionResponseDTO;
 import com.coderbank.transaction_service.service.TransactionService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/v1/transactions")
 public class TransactionController {
 
-    private final TransactionService service;
+
+    private final TransactionService transactionService;
 
     public TransactionController(TransactionService service) {
-        this.service = service;
+        this.transactionService = service;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public TransactionResponse create(@RequestBody TransactionRequest request) {
-        Transaction saved = service.create(request);
-        return toResponse(saved);
+    public ResponseEntity<TransactionResponseDTO> createTransaction(@Valid @RequestBody TransactionRequestDTO transactionRequestDTO) {
+
+        TransactionResponseDTO transactionResponseDTO = transactionService.create(transactionRequestDTO);
+
+        URI location = URI.create(String.format("/api/v1/transactions/%s", transactionResponseDTO.id()));
+
+        return ResponseEntity.created(location).body(transactionResponseDTO);
+
+
+        
+             
+        
+       
     }
 
-    @GetMapping("/by-account/{accountId}")
-    public List<TransactionResponse> findByAccount(@PathVariable UUID accountId) {
-        return service.findByAccount(accountId).stream().map(this::toResponse).collect(Collectors.toList());
+
+
+
+    @GetMapping("/{id}")
+    public ResponseEntity<List<TransactionResponseDTO>> getTransactions(@PathVariable("id") UUID id) {
+
+        TransactionResponseDTO transactionResponseDTO = transactionService.getTransactionById(id);
+
+        return ResponseEntity.ok(List.of(transactionResponseDTO));
+
+
     }
 
-    private TransactionResponse toResponse(Transaction t) {
-        TransactionResponse r = new TransactionResponse();
-        r.setId(t.getId());
-        r.setAccountId(t.getAccountId());
-        r.setAmount(t.getAmount());
-        r.setCurrency(t.getCurrency());
-        r.setDescription(t.getDescription());
-        r.setStatus(t.getStatus());
-        r.setCreatedAt(t.getCreatedAt());
-        return r;
-    }
+
 }

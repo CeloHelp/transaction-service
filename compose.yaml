@@ -1,28 +1,33 @@
 services:
-  postgres:
+  transaction-db:
     image: postgres:16
+    container_name: transaction-db
     environment:
       POSTGRES_DB: transaction_db
       POSTGRES_USER: transaction_user
       POSTGRES_PASSWORD: transaction_pass
     ports:
-      - '5432:5432'
+      - "5434:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - transaction_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 10s
       timeout: 5s
       retries: 5
-  app:
-    build: .
-    depends_on:
-      postgres:
-        condition: service_healthy
-    environment:
-      - JAVA_OPTS=
+
+  transaction-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: transaction-service:local
+    container_name: transaction-service
     ports:
-      - "8080:8080"
+      - "8082:8082"
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+    depends_on:
+      - transaction-db
 
 volumes:
-  postgres_data:
+  transaction_data:

@@ -1,41 +1,45 @@
 package com.coderbank.transaction_service.service;
 
+import com.coderbank.transaction_service.dto.response.TransactionResponseDTO;
+import com.coderbank.transaction_service.factory.TransactionFactory;
+import com.coderbank.transaction_service.mapper.TransactionMapper;
 import com.coderbank.transaction_service.model.Transaction;
-import com.coderbank.transaction_service.model.TransactionStatus;
 import com.coderbank.transaction_service.repository.TransactionRepository;
-import com.coderbank.transaction_service.dto.request.TransactionRequest;
+import com.coderbank.transaction_service.dto.request.TransactionRequestDTO;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.math.BigDecimal;
 import java.util.UUID;
 
 @Service
 public class TransactionService {
 
-    private final TransactionRepository repository;
+    private final TransactionRepository transactionRepository;
 
     public TransactionService(TransactionRepository repository) {
-        this.repository = repository;
+        this.transactionRepository = repository;
     }
 
-    public Transaction create(TransactionRequest request) {
-        Transaction t = new Transaction(
-                request.getAccountId(),
-                request.getAmount(),
-                request.getCurrency(),
-                request.getDescription()
-        );
-        BigDecimal amt = request.getAmount();
-        if (amt != null && amt.compareTo(BigDecimal.ZERO) > 0) {
-            t.setStatus(TransactionStatus.COMPLETED);
-        } else {
-            t.setStatus(TransactionStatus.PENDING);
-        }
-        return repository.save(t);
+    public TransactionResponseDTO create(TransactionRequestDTO transactionRequestDTO) {
+
+        Transaction transaction = TransactionFactory.createFromRequest(transactionRequestDTO);
+
+        transaction.registerAmount(transactionRequestDTO.amount());
+
+        Transaction bonusTransaction = TransactionFactory.createInitialBonus(transaction.getId());
+
+        transactionRepository.save(transaction);
+
+        return TransactionMapper.toResponse(transaction);
+
+
     }
 
-    public List<Transaction> findByAccount(UUID accountId) {
-        return repository.findByAccountIdOrderByCreatedAtDesc(accountId);
+    public TransactionResponseDTO getTransactionById(UUID id) {
+
+        Transaction transaction = transactionRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Transaction not found"));
+
+        return TransactionMapper.toResponse(transaction);
     }
 }
+
