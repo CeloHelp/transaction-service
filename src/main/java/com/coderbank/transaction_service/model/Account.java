@@ -63,4 +63,16 @@ public class Account {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    // Método de criação customizado
+    public static Account create(UUID customerId, BigDecimal balance, AccountStatus status, String description) {
+        return new Account(
+                null,
+                customerId,
+                balance != null ? balance : BigDecimal.ZERO,
+                status != null ? status : AccountStatus.ACTIVE,
+                null,
+                null
+        );
+    }
 }

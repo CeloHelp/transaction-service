@@ -6,10 +6,9 @@ import com.coderbank.transaction_service.service.AccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @RestController
@@ -25,5 +24,11 @@ public class AccountController {
 
         return ResponseEntity.status(201).body(accountResponseDTO);
 
+    }
+
+    @GetMapping
+    public ResponseEntity<List<AccountResponseDTO>> getAllAccounts() {
+        List<AccountResponseDTO> accounts = accountService.getAllAccounts();
+        return ResponseEntity.ok(accounts);
     }
 }

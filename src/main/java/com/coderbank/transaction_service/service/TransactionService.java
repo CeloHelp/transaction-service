@@ -1,8 +1,7 @@
 package com.coderbank.transaction_service.service;
 
 import com.coderbank.transaction_service.dto.response.TransactionResponseDTO;
-import com.coderbank.transaction_service.factory.TransactionFactory;
-import com.coderbank.transaction_service.mapper.TransactionMapper;
+import com.coderbank.transaction_service.mapper.TransactionMapperStruct;
 import com.coderbank.transaction_service.model.Transaction;
 import com.coderbank.transaction_service.repository.TransactionRepository;
 import com.coderbank.transaction_service.dto.request.TransactionRequestDTO;
@@ -14,24 +13,24 @@ import java.util.UUID;
 public class TransactionService {
 
     private final TransactionRepository transactionRepository;
+    private final TransactionMapperStruct transactionMapperStruct;
 
-    public TransactionService(TransactionRepository repository) {
+    public TransactionService(TransactionRepository repository, TransactionMapperStruct transactionMapperStruct) {
         this.transactionRepository = repository;
+        this.transactionMapperStruct = transactionMapperStruct;
     }
 
     public TransactionResponseDTO create(TransactionRequestDTO transactionRequestDTO) {
 
-        Transaction transaction = TransactionFactory.createFromRequest(transactionRequestDTO);
+        Transaction transaction = transactionMapperStruct.toEntity(transactionRequestDTO);
 
         transaction.registerAmount(transactionRequestDTO.amount());
 
-        Transaction bonusTransaction = TransactionFactory.createInitialBonus(transaction.getId());
+        Transaction bonusTransaction = transactionMapperStruct.createInitialBonus(transaction.getId());
 
         transactionRepository.save(transaction);
 
-        return TransactionMapper.toResponse(transaction);
-
-
+        return transactionMapperStruct.toResponse(transaction);
     }
 
     public TransactionResponseDTO getTransactionById(UUID id) {
@@ -39,7 +38,7 @@ public class TransactionService {
         Transaction transaction = transactionRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Transaction not found"));
 
-        return TransactionMapper.toResponse(transaction);
+        return transactionMapperStruct.toResponse(transaction);
     }
 }
 
