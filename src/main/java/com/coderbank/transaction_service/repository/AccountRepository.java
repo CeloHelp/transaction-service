@@ -10,5 +10,7 @@ public interface AccountRepository extends JpaRepository<Account, UUID > {
 
     Optional<Account> findByCustomerId(UUID customerId);
 
+
+
     boolean existsByCustomerId(UUID customerId);
 }
