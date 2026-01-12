@@ -100,5 +100,22 @@ public class Transaction {
 
     }
 
+    // Métodos da conta //
+
+    public static Transaction create (UUID accountId, BigDecimal amount, String currency, String description) {
+        Transaction transaction = new Transaction();
+        transaction.setAccountId(accountId);
+        transaction.setAmount(amount);
+        transaction.setCurrency(currency);
+        transaction.setDescription(description);
+        transaction.setStatus(TransactionStatus.PENDING);
+        return transaction;
+    }
+
+    // Método para obter o valor do bônus
+    public static final BigDecimal getBonusValue(Transaction transaction) {
+        return BONUS_VALUE;
+    }
+
    }
 

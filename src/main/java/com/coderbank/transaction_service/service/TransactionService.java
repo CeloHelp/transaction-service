@@ -1,7 +1,6 @@
 package com.coderbank.transaction_service.service;
 
 import com.coderbank.transaction_service.dto.response.TransactionResponseDTO;
-import com.coderbank.transaction_service.factory.TransactionFactory;
 import com.coderbank.transaction_service.mapper.TransactionMapper;
 import com.coderbank.transaction_service.model.Transaction;
 import com.coderbank.transaction_service.repository.TransactionRepository;
@@ -21,7 +20,7 @@ public class TransactionService {
 
     public TransactionResponseDTO create(TransactionRequestDTO transactionRequestDTO) {
 
-        Transaction transaction = TransactionFactory.createFromRequest(transactionRequestDTO);
+        Transaction transaction = transaction;
 
         transaction.registerAmount(transactionRequestDTO.amount());
 

@@ -8,7 +8,6 @@ public record AccountResponseDTO(
     UUID accountId,
     UUID customerId,
     BigDecimal balance,
-    String status,
     LocalDateTime createdAt
 
 ) {

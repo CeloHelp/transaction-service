@@ -63,4 +63,20 @@ public class Account {
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
+
+    // -- Métodos de negócio da conta bancária --
+
+    public static Account create(String accountId, UUID customerId, BigDecimal initialBalance) {
+
+        if(customerId == null) {
+            throw new IllegalArgumentException("Customer ID cannot be null");
+        }
+
+        Account account = new Account();
+
+        account.setBalance(initialBalance);
+        account.setStatus(AccountStatus.ACTIVE);
+        return account;
+    }
 }
